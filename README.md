@@ -28,6 +28,41 @@ La aplicación permite al usuario:
 - Seleccionar el algoritmo de ordenamiento (Bubble Sort o Merge Sort).
 - Visualizar el resultado ordenado.
 
+
+## Instalación
+
+1. **Clona el repositorio** (o descarga los archivos):
+
+   ```sh
+   git clone <URL-del-repositorio>
+   cd "Algoritmos de ordenamiento"
+   ```
+
+2. **Crea un entorno virtual** (opcional pero recomendado):
+
+   ```sh
+   python -m venv venv
+   venv\Scripts\activate
+   ```
+
+3. **Instala las dependencias**:
+
+   ```sh
+   pip install -r requirements.txt
+   ```
+
+   O si usas `pyproject.toml`:
+
+   ```sh
+   pip install .
+   ```
+
+   O directamente:
+
+   ```sh
+   pip install streamlit numpy pandas
+   ```
+   
 ### Ejecución
 
 Desde la terminal, ejecuta:
