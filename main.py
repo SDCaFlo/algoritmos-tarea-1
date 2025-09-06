@@ -1,4 +1,4 @@
-from algoritmos import *
+from algoritmos import BubbleSort, MergeSort, SelectionSort
 import streamlit as st
 
 st.title("Algoritmos de ordenamiento")
@@ -12,7 +12,8 @@ except Exception:
     array = []
 
 algorithm = st.selectbox(
-    "Selecciona el método de ordenamiento:", ("Bubble Sort", "Merge Sort", "Selection Sort")
+    "Selecciona el método de ordenamiento:",
+    ("Bubble Sort", "Merge Sort", "Selection Sort"),
 )
 
 # Botón para ejecutar
