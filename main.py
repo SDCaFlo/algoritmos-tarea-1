@@ -1,15 +1,28 @@
 from algoritmos import BubbleSort, MergeSort, SelectionSort, QuickSort, InsertionSort
 import streamlit as st
+import random
 
 st.title("Algoritmos de ordenamiento")
 
-text_array = st.text_input("Ingresa los números separados por comas", "5,4,3,2")
 
-try:
-    array = [int(x) for x in text_array.split(",")]
-except Exception:
-    st.error("Asegúrese de que los números estén separados por comas")
-    array = []
+# Opción para generar arrays aleatorios
+col1, col2 = st.columns([2, 1])
+with col2:
+    size = st.selectbox("Tamaño del array aleatorio", (10, 50, 100))
+    if st.button("Generar array aleatorio"):
+        array = [random.randint(0, 100) for _ in range(size)]
+        st.session_state["array"] = array
+    else:
+        array = st.session_state.get("array", [5, 4, 3, 2])
+
+with col1:
+    text_array = st.text_input("Ingresa los números separados por comas", ",".join(map(str, array)))
+    try:
+        array = [int(x) for x in text_array.split(",") if x.strip() != ""]
+        st.session_state["array"] = array
+    except Exception:
+        st.error("Asegúrese de que los números estén separados por comas")
+        array = []
 
 algorithm = st.selectbox(
     "Selecciona el método de ordenamiento:",
