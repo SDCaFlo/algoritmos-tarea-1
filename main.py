@@ -16,7 +16,9 @@ with col2:
         array = st.session_state.get("array", [5, 4, 3, 2])
 
 with col1:
-    text_array = st.text_input("Ingresa los números separados por comas", ",".join(map(str, array)))
+    text_array = st.text_input(
+        "Ingresa los números separados por comas", ",".join(map(str, array))
+    )
     try:
         array = [int(x) for x in text_array.split(",") if x.strip() != ""]
         st.session_state["array"] = array
