@@ -18,9 +18,8 @@ def mostrar():
 
     opcion = st.radio(
         "Selecciona un algoritmo:",
-        ["Kruskal", "Dijkstra", "Agente Viajero", "Cambio de Moneda"]
+        ["Kruskal", "Dijkstra", "Agente Viajero", "Cambio de Moneda"],
     )
-
 
     # ========================
     # Algoritmo de Kruskal
@@ -51,10 +50,11 @@ def mostrar():
 
             plt.figure(figsize=(5, 5))
             nx.draw(G, pos, with_labels=True, node_color="skyblue", node_size=1500)
-            nx.draw_networkx_edge_labels(G, pos, edge_labels={(u, v): w for u, v, w in aristas})
+            nx.draw_networkx_edge_labels(
+                G, pos, edge_labels={(u, v): w for u, v, w in aristas}
+            )
             nx.draw_networkx_edges(G, pos, edgelist=mst, width=3, edge_color="red")
             st.pyplot(plt)
-
 
     # ========================
     # Algoritmo de Dijkstra
@@ -75,7 +75,6 @@ def mostrar():
             st.write("Distancias mínimas desde", inicio)
             st.json(distancias)
 
-
     # ========================
     # Algoritmo Agente Viajero
     # ========================
@@ -90,15 +89,20 @@ def mostrar():
         ]
         nombres_ciudades = ["A", "B", "C", "D"]
 
-        inicio = st.selectbox("Ciudad inicial", list(range(len(nombres_ciudades))), format_func=lambda x: nombres_ciudades[x])
+        inicio = st.selectbox(
+            "Ciudad inicial",
+            list(range(len(nombres_ciudades))),
+            format_func=lambda x: nombres_ciudades[x],
+        )
 
         if st.button("Ejecutar Agente Viajero"):
             ruta, costo_total = calcular_ruta_voraz(distancias, inicio)
             st.success(f"Costo total: {costo_total}")
 
             for i in range(len(ruta) - 1):
-                st.write(f"{nombres_ciudades[ruta[i]]} → {nombres_ciudades[ruta[i+1]]} (costo {distancias[ruta[i]][ruta[i+1]]})")
-
+                st.write(
+                    f"{nombres_ciudades[ruta[i]]} → {nombres_ciudades[ruta[i + 1]]} (costo {distancias[ruta[i]][ruta[i + 1]]})"
+                )
 
     # ========================
     # Algoritmo Cambio de Moneda

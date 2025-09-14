@@ -7,16 +7,21 @@ from algoritmos.backtracking.utils.ajedrez import Caballo, TableroAjedrez
 def mostrar():
     # --- Menú ---
     st.title("🎯 Algoritmos Interactivos")
-    opcion = st.radio("Selecciona un algoritmo:", ["Salto del Caballo", "Torres de Hanoi"])
-
+    opcion = st.radio(
+        "Selecciona un algoritmo:", ["Salto del Caballo", "Torres de Hanoi"]
+    )
 
     # --- Salto del Caballo ---
     if opcion == "Salto del Caballo":
         st.subheader("♞ Salto del Caballo (Knight's Tour)")
 
         # Posición inicial
-        x = st.number_input("Fila inicial", min_value=1, max_value=TableroAjedrez.x_size, value=1)
-        y = st.number_input("Columna inicial", min_value=1, max_value=TableroAjedrez.y_size, value=1)
+        x = st.number_input(
+            "Fila inicial", min_value=1, max_value=TableroAjedrez.x_size, value=1
+        )
+        y = st.number_input(
+            "Columna inicial", min_value=1, max_value=TableroAjedrez.y_size, value=1
+        )
 
         if st.button("Ejecutar algoritmo"):
             caballo = Caballo(x, y)
@@ -32,7 +37,7 @@ def mostrar():
 
                 tablero = np.zeros((TableroAjedrez.x_size, TableroAjedrez.y_size))
                 for i, (fx, fy) in enumerate(caballo.ruta_actual):
-                    tablero[fx-1, fy-1] = i+1
+                    tablero[fx - 1, fy - 1] = i + 1
 
                 fig, ax = plt.subplots()
                 ax.matshow(tablero, cmap="viridis")
@@ -43,7 +48,6 @@ def mostrar():
                 st.pyplot(fig)
             else:
                 st.error("No se encontró solución 😢")
-
 
     # --- Torres de Hanoi ---
     elif opcion == "Torres de Hanoi":
