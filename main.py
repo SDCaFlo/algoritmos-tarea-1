@@ -1,4 +1,4 @@
-from algoritmos import BubbleSort, MergeSort, SelectionSort, QuickSort, InsertionSort
+from algoritmos.ordenamiento import BubbleSort, MergeSort, SelectionSort, QuickSort, InsertionSort
 import streamlit as st
 import random
 
