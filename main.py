@@ -11,11 +11,11 @@ if "pagina" not in st.session_state:
 # Barra de menú con columnas
 col1, col2, col3 = st.columns(3)
 
-if col1.button("🏠 Ordenamiento"):
+if col1.button("🔢 Ordenamiento"):
     st.session_state.pagina = "ordenamiento"
-if col2.button("📊 Backtracking"):
+if col2.button("🔙 Backtracking"):
     st.session_state.pagina = "backtracking"
-if col3.button("⚙️ Voraces"):
+if col3.button("🦁 Voraces"):
     st.session_state.pagina = "voraces"
 
 # Mostrar la página activa
