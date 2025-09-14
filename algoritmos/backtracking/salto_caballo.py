@@ -1,4 +1,4 @@
-from .utils.ajedrez import *
+from .utils.ajedrez import TableroAjedrez, Caballo
 
 def salto_caballo(ficha: Caballo = Caballo(1,1)):
     # Revisamos si ya se realizaron 64 movimientos ( Si la ficha ya pasó por todas las casillas)    
