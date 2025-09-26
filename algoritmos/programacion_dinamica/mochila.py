@@ -86,13 +86,16 @@ def main():
     lista_elementos = [ele_1, ele_2, ele_3, ele_4, ele_5]
     capacidad = 7
 
-    print('Lista de objetos: \n')
-    for objeto in [ {'objeto': f'objeto_{index+1}', 'valor': objeto.valor, 'peso': objeto.peso} for index, objeto in enumerate(lista_elementos)]:
-        print(f'{objeto['objeto']}, valor: {objeto['valor']}, peso:{objeto['peso']}')
-    
-    print('\nCapacidad de la mochila: ', capacidad)
+    print("Lista de objetos: \n")
+    for objeto in [
+        {"objeto": f"objeto_{index + 1}", "valor": objeto.valor, "peso": objeto.peso}
+        for index, objeto in enumerate(lista_elementos)
+    ]:
+        print(f"{objeto['objeto']}, valor: {objeto['valor']}, peso:{objeto['peso']}")
 
-    print('\n********Solving********\n')
+    print("\nCapacidad de la mochila: ", capacidad)
+
+    print("\n********Solving********\n")
     solved_matrix = calcular_matriz_mochila(lista_elementos, capacidad)
     elementos_incluidos = calcular_elementos_incluidos(lista_elementos, solved_matrix)
     mostrar_resultados(elementos_incluidos)
