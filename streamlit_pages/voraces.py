@@ -28,30 +28,82 @@ def mostrar():
         st.subheader("🌳 Árbol de Expansión Mínima (Kruskal)")
 
         # Grafo de ejemplo
-        aristas = [
-            (0, 1, 1),
-            (0, 2, 5),
-            (1, 2, 2),
-            (1, 3, 4),
-            (2, 3, 3),
-        ]
-        nodos = ["A", "B", "C", "D"]
+        if "kruskal_nodos" not in st.session_state:
+            st.session_state.kruskal_nodos = ["A", "B", "C", "D"]
+        if "kruskal_aristas" not in st.session_state:
+            st.session_state.kruskal_aristas = [
+                (0, 1, 1),
+                (0, 2, 5),
+                (1, 2, 2),
+                (1, 3, 4),
+                (2, 3, 3),
+            ]
+
+        st.write("### Nodos")
+        col1, col2 = st.columns([2, 1])
+        with col1:
+            st.write("Nodos actuales:", st.session_state.kruskal_nodos)
+            new_node = st.text_input("Agregar nodo", "")
+            if st.button("Añadir nodo"):
+                if new_node and new_node not in st.session_state.kruskal_nodos:
+                    st.session_state.kruskal_nodos.append(new_node)
+                    st.rerun()
+        with col2:
+            remove_node = st.selectbox("Eliminar nodo", st.session_state.kruskal_nodos)
+            if st.button("Eliminar nodo"):
+                idx = st.session_state.kruskal_nodos.index(remove_node)
+                st.session_state.kruskal_nodos.remove(remove_node)
+                # Remove edges related to this node
+                st.session_state.kruskal_aristas = [
+                    (u, v, w) for u, v, w in st.session_state.kruskal_aristas
+                    if u != idx and v != idx
+                ]
+                # Reindex edges
+                def reindex(i):
+                    return i - 1 if i > idx else i
+                st.session_state.kruskal_aristas = [
+                    (reindex(u), reindex(v), w) for u, v, w in st.session_state.kruskal_aristas
+                ]
+                st.rerun()
+
+        st.write("### Aristas")
+        col3, col4 = st.columns([2, 1])
+        with col3:
+            st.write("Aristas actuales:")
+            for idx, (u, v, w) in enumerate(st.session_state.kruskal_aristas):
+                st.write(f"{st.session_state.kruskal_nodos[u]} -- {st.session_state.kruskal_nodos[v]} : {w}")
+        with col4:
+            origen = st.selectbox("Origen", st.session_state.kruskal_nodos)
+            destino = st.selectbox("Destino", st.session_state.kruskal_nodos)
+            peso = st.number_input("Peso", value=1)
+            if st.button("Añadir arista"):
+                u = st.session_state.kruskal_nodos.index(origen)
+                v = st.session_state.kruskal_nodos.index(destino)
+                if u != v:
+                    st.session_state.kruskal_aristas.append((u, v, peso))
+                    st.rerun()
+            arista_idx = st.number_input("Índice arista a eliminar", min_value=0, max_value=max(0, len(st.session_state.kruskal_aristas)-1), value=0)
+            if st.button("Eliminar arista"):
+                if st.session_state.kruskal_aristas:
+                    st.session_state.kruskal_aristas.pop(arista_idx)
+                    st.rerun()
 
         if st.button("Ejecutar Kruskal"):
-            mst = kruskal(4, aristas)
+            n = len(st.session_state.kruskal_nodos)
+            mst = kruskal(n, st.session_state.kruskal_aristas)
             st.success("Árbol de expansión mínima encontrado")
             for u, v, peso in mst:
-                st.write(f"{nodos[u]} -- {nodos[v]} : {peso}")
+                st.write(f"{st.session_state.kruskal_nodos[u]} -- {st.session_state.kruskal_nodos[v]} : {peso}")
 
             # Visualización
             G = nx.Graph()
-            G.add_weighted_edges_from(aristas)
+            G.add_weighted_edges_from(st.session_state.kruskal_aristas)
             pos = nx.spring_layout(G)
 
             plt.figure(figsize=(5, 5))
-            nx.draw(G, pos, with_labels=True, node_color="skyblue", node_size=1500)
+            nx.draw(G, pos, with_labels=True, labels={i: name for i, name in enumerate(st.session_state.kruskal_nodos)}, node_color="skyblue", node_size=1500)
             nx.draw_networkx_edge_labels(
-                G, pos, edge_labels={(u, v): w for u, v, w in aristas}
+                G, pos, edge_labels={(u, v): w for u, v, w in st.session_state.kruskal_aristas}
             )
             nx.draw_networkx_edges(G, pos, edgelist=mst, width=3, edge_color="red")
             st.pyplot(plt)
