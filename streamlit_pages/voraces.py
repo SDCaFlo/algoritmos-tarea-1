@@ -114,19 +114,83 @@ def mostrar():
     elif opcion == "Dijkstra":
         st.subheader("📍 Rutas más cortas (Dijkstra)")
 
-        grafo = {
-            "A": {"B": 2, "C": 5},
-            "B": {"A": 2, "C": 6, "D": 1},
-            "C": {"A": 5, "B": 6, "D": 3},
-            "D": {"B": 1, "C": 3},
-        }
-        inicio = st.selectbox("Selecciona nodo inicial", list(grafo.keys()))
+        # Estado inicial
+        if "dijkstra_nodos" not in st.session_state:
+            st.session_state.dijkstra_nodos = ["A", "B", "C", "D"]
+        if "dijkstra_aristas" not in st.session_state:
+            st.session_state.dijkstra_aristas = [
+                {"origen": "A", "destino": "B", "costo": 2},
+                {"origen": "A", "destino": "C", "costo": 5},
+                {"origen": "B", "destino": "C", "costo": 6},
+                {"origen": "B", "destino": "D", "costo": 1},
+                {"origen": "C", "destino": "D", "costo": 3},
+                {"origen": "D", "destino": "B", "costo": 1},
+                {"origen": "D", "destino": "C", "costo": 3},
+            ]
+
+        st.write("### Nodos")
+        col1, col2 = st.columns([2, 1])
+        with col1:
+            st.write("Nodos actuales:", st.session_state.dijkstra_nodos)
+            new_node = st.text_input("Agregar nodo", "")
+            if st.button("Añadir nodo"):
+                if new_node and new_node not in st.session_state.dijkstra_nodos:
+                    st.session_state.dijkstra_nodos.append(new_node)
+                    st.rerun()
+        with col2:
+            remove_node = st.selectbox("Eliminar nodo", st.session_state.dijkstra_nodos)
+            if st.button("Eliminar nodo"):
+                st.session_state.dijkstra_nodos.remove(remove_node)
+                # Eliminar aristas relacionadas
+                st.session_state.dijkstra_aristas = [
+                    a for a in st.session_state.dijkstra_aristas
+                    if a["origen"] != remove_node and a["destino"] != remove_node
+                ]
+                st.rerun()
+
+        st.write("### Aristas")
+        col3, col4 = st.columns([2, 1])
+        with col3:
+            st.write("Aristas actuales:")
+            for idx, a in enumerate(st.session_state.dijkstra_aristas):
+                st.write(f"{a['origen']} → {a['destino']} : {a['costo']}")
+        with col4:
+            origen = st.selectbox("Origen", st.session_state.dijkstra_nodos)
+            destino = st.selectbox("Destino", st.session_state.dijkstra_nodos)
+            costo = st.number_input("Costo", value=1)
+            if st.button("Añadir arista"):
+                if origen != destino:
+                    st.session_state.dijkstra_aristas.append({"origen": origen, "destino": destino, "costo": costo})
+                    st.rerun()
+            arista_idx = st.number_input("Índice arista a eliminar", min_value=0, max_value=max(0, len(st.session_state.dijkstra_aristas)-1), value=0)
+            if st.button("Eliminar arista"):
+                if st.session_state.dijkstra_aristas:
+                    st.session_state.dijkstra_aristas.pop(arista_idx)
+                    st.rerun()
+
+        # Construir el grafo para Dijkstra
+        grafo = {n: {} for n in st.session_state.dijkstra_nodos}
+        for a in st.session_state.dijkstra_aristas:
+            grafo[a["origen"]][a["destino"]] = int(a["costo"])
+
+        inicio = st.selectbox("Selecciona nodo inicial", st.session_state.dijkstra_nodos)
 
         if st.button("Ejecutar Dijkstra"):
             distancias = dijkstra(grafo, inicio)
             st.write("Distancias mínimas desde", inicio)
             st.json(distancias)
 
+            # Visualización
+            G = nx.DiGraph()
+            for a in st.session_state.dijkstra_aristas:
+                G.add_edge(a["origen"], a["destino"], weight=a["costo"])
+            pos = nx.spring_layout(G)
+            plt.figure(figsize=(5, 5))
+            nx.draw(G, pos, with_labels=True, node_color="lightgreen", node_size=1500)
+            nx.draw_networkx_edge_labels(
+                G, pos, edge_labels={(a["origen"], a["destino"]): a["costo"] for a in st.session_state.dijkstra_aristas}
+            )
+            st.pyplot(plt)
     # ========================
     # Algoritmo Agente Viajero
     # ========================
@@ -141,21 +205,40 @@ def mostrar():
         ]
         nombres_ciudades = ["A", "B", "C", "D"]
 
+        G = nx.Graph()
+        for i in range(len(nombres_ciudades)):
+            for j in range(len(nombres_ciudades)):
+                if i != j:
+                    G.add_edge(nombres_ciudades[i], nombres_ciudades[j], weight=distancias[i][j])
+        pos = nx.spring_layout(G)
+        plt.figure(figsize=(5, 5))
+        nx.draw(G, pos, with_labels=True, node_color="lightblue", node_size=1200)
+        nx.draw_networkx_edge_labels(
+            G, pos, edge_labels={(nombres_ciudades[i], nombres_ciudades[j]): distancias[i][j]
+                                for i in range(len(nombres_ciudades)) for j in range(len(nombres_ciudades)) if i != j}
+        )
+
         inicio = st.selectbox(
             "Ciudad inicial",
             list(range(len(nombres_ciudades))),
             format_func=lambda x: nombres_ciudades[x],
         )
 
+        ruta_edges = []
         if st.button("Ejecutar Agente Viajero"):
             ruta, costo_total = calcular_ruta_voraz(distancias, inicio)
             st.success(f"Costo total: {costo_total}")
-
             for i in range(len(ruta) - 1):
                 st.write(
                     f"{nombres_ciudades[ruta[i]]} → {nombres_ciudades[ruta[i + 1]]} (costo {distancias[ruta[i]][ruta[i + 1]]})"
                 )
+            ruta_edges = [(nombres_ciudades[ruta[i]], nombres_ciudades[ruta[i + 1]]) for i in range(len(ruta) - 1)]
 
+        # Si hay ruta, dibujarla en rojo sobre el mismo grafo
+        if ruta_edges:
+            nx.draw_networkx_edges(G, pos, edgelist=ruta_edges, width=4, edge_color="red")
+
+        st.pyplot(plt)
     # ========================
     # Algoritmo Cambio de Moneda
     # ========================
