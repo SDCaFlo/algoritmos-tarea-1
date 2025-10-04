@@ -4,6 +4,8 @@ from streamlit_pages import backtracking
 from streamlit_pages import voraces
 from streamlit_pages import dinamicos
 
+st.set_page_config(layout="wide")
+
 
 # Inicializar estado
 if "pagina" not in st.session_state:

@@ -6,6 +6,9 @@ from algoritmos.backtracking.utils.ajedrez import Caballo, TableroAjedrez
 
 def mostrar():
     # --- Menú ---
+
+    st.set_page_config(layout="centered")
+
     st.title("🎯 Algoritmos Interactivos")
     opcion = st.radio(
         "Selecciona un algoritmo:", ["Salto del Caballo", "Torres de Hanoi"]

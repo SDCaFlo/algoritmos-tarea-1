@@ -9,11 +9,12 @@ from algoritmos.voraces.agente_viajero import calcular_ruta_voraz
 from algoritmos.voraces.cambio_moneda import calcular_cambio
 
 
+
 def mostrar():
     # ========================
     # Interfaz principal
     # ========================
-    st.set_page_config(page_title="Algoritmos Voraces", layout="centered")
+    st.set_page_config(page_title="Algoritmos Voraces", layout="wide")
     st.title("⚡ Algoritmos Voraces")
 
     opcion = st.radio(
